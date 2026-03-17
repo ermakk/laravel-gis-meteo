@@ -13,13 +13,13 @@
 ## Установка
 
 ```bash
-composer require ermakk/gis-meteo
+composer require ermakk/laravel-gis-meteo
 ```
 
 ## Публикация конфигурации
 
 ```bash
-composer require ermakk/gis-meteo
+php artisan vendor:publish --provider="Ermakk\GisMeteo\Providers\GisMeteoServiceProvider" --tag=config
 ```
 ## Настройка .env
 ```

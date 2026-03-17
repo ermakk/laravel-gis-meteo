@@ -23,7 +23,7 @@
     "extra": {
         "laravel": {
             "providers": [
-                "Ermakk\\GisMeteo\\GismeteoServiceProvider"
+                "Ermakk\\GisMeteo\\GisMeteoServiceProvider"
             ],
             "aliases": {
                 "Weather": "Ermakk\\GisMeteo\\Facades\\Weather"
