@@ -37,16 +37,25 @@ class GisMeteoService
         $day = now()->format('Y-m-d');
         // Создаем уникальный ключ для кэширования
         $cacheKey = "gis-meteo.weather.$city.day.$day";
-        if(config('gis-meteo.debug', false)) {
-            $request = new ForecastRequest($city);
-            $response = $this->connector->send($request->debugMode());
-            return $response->dto();
+        try {
+            if(config('gis-meteo.debug', false)) {
+                $request = new ForecastRequest($city);
+                $response = $this->connector->send($request->debugMode());
+                return $response->dto();
+            }
+            return Cache::remember($cacheKey, $this->cacheTtl, function () use ($city) {
+                $request = new ForecastRequest($city);
+                $response = $this->connector->send($request);
+                if($response->status() === 200) {
+                    return $response->dto();
+                } else {
+                    throw new \Exception('Произошла ошибка при запросе на GisMeteo');
+                }
+                return $response->dto();
+            });
+        } catch($e) {
+            return $e;
         }
-        return Cache::remember($cacheKey, $this->cacheTtl, function () use ($city) {
-            $request = new ForecastRequest($city);
-            $response = $this->connector->send($request);
-            return $response->dto();
-        });
     }
 
     // Метод для очистки кэша для конкретного города
