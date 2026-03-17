@@ -1,8 +1,5 @@
 # GisMeteo Weather Package for Laravel
 
-[![Latest Version on Packagist](https://img.shields.io/packagist/v/ermakk/gis-meteo.svg?style=flat-square)](https://packagist.org/packages/ermakk/gis-meteo)
-[![Total Downloads](https://img.shields.io/packagist/dt/ermakk/gis-meteo.svg?style=flat-square)](https://packagist.org/packages/ermakk/gis-meteo)
-
 Пакет для интеграции с API GisMeteo в Laravel приложениях. Предоставляет удобный доступ к данным о погоде с использованием современных DTO и системой кэширования.
 
 ## Особенности
