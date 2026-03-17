@@ -13,7 +13,7 @@
     "require": {
         "php": "^8.2",
         "laravel/framework": "^11.0",
-        "saloonphp/saloon": "^2.0"
+        "saloonphp/saloon": "v3.11.1"
     },
     "autoload": {
         "psr-4": {
