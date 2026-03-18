@@ -2,6 +2,7 @@
 
 namespace Ermakk\GisMeteo\DTOs;
 
+use Ermakk\GisMeteo\Helpers\GetCurrent;
 use Ermakk\GisMeteo\Helpers\PrecipitationIntensity;
 use Ermakk\GisMeteo\DTOs\PrecipitationIntensity as PrecipitationIntensityDTO;
 use Ermakk\GisMeteo\Helpers\PrecipitationType;
@@ -19,92 +20,50 @@ use Illuminate\Support\Collection;
 
 class Current
 {
-    public ?WinDTO $windDirection;
-    public ?PrecipitationIntensityDTO $precipitationIntensity;
-    public ?PrecipitationTypeDTO $precipitationType;
-    public ?CloudinessDTO $cloudinessLabel;
-    public ?PollenBirchDTO $pollenBirch;
-    public ?PollenGrassDTO $pollenGrass;
 
+    protected array $current = [];
     public function __construct(
-        public string|Carbon $time,
-        public int $temperature_air,
-        public int $temperature_water,
-        public int $precipitation_type,
-        public int $pressure,
-        public bool $storm_prediction,
-        public int $cloudiness,
-        public int $humidity,
-        public string $icon_weather,
-        public string $description,
-        public int|null $precipitation_probability = null,
-        public int|null $dew_point = null,
-        public int|null $temperature_heat_index = null,
-        public int|null $precipitation = null,
-        public int|null $precipitation_intensity = null,
-        public int|null $wind_direction = null,
-        public int|null $wind_speed = null,
-        public int|null $wind_gust = null,
-        public int|null $snow_height = null,
-        public int|null $snow_fall = null,
-        public int|null $pollen_birch = null,
-        public int|null $pollen_grass = null,
-        public int|null $radiation = null,
-        public int|null $road_condition_code = null
+        protected GetCurrent $data
     )
     {
-
-        // Инициализация коллекций с преобразованием
-        $this->temperature_air = $this->normalizeNumbers($temperature_air, 1);
-        $this->temperature_heat_index = $this->normalizeNumbers($temperature_heat_index, 1);
-        $this->wind_speed = $this->normalizeNumbers($wind_speed, 1);
-        $this->wind_gust = $this->normalizeNumbers($wind_gust, 1);
-
-        $this->time = collect($time)->map(fn($item) => new Carbon($item));
-        $this->precipitationIntensity = PrecipitationIntensity::createDTO($this->precipitation_intensity);
-        $this->precipitationType = PrecipitationType::createDTO($this->precipitation_type);
-        $this->cloudinessLabel = $cloudiness ? Cloudiness::createDTO($cloudiness) : null;
-        $this->pollenBirch = $pollen_birch ? PollenBirch::createDTO($pollen_birch) : null;
-        $this->pollenGrass = $pollen_grass ? PollenGrass::createDTO($pollen_grass) : null;
-        $this->windDirection = $wind_direction ? Wind::createDTO($wind_direction) : null;
+        $this->current = $data->toArray();
     }
 
-    protected function normalizeNumbers(int|float $numbers, int $precision): int|float
-    {
-        return is_numeric($numbers) ? number_format((float) $numbers, $precision, '.', '') : $numbers;
-    }
     /**
      * Преобразует в массив (для сериализации)
      */
     public function toArray(): array
     {
         return [
-            'time' => $this->time,
-            'temperature_air' => $this->temperature_air,
-            'temperature_heat_index' => $this->temperature_heat_index,
-            'temperature_water' => $this->temperature_water,
-            'precipitation' => $this->precipitation,
-            'precipitation_type' => $this->precipitation_type,
-            'precipitationType' => $this->precipitationType,
-            'precipitation_intensity' => $this->precipitation_intensity,
-            'precipitationIntensity' => $this->precipitationIntensity,
-            'precipitation_probability' => $this->precipitation_probability,
-            'pressure' => $this->pressure,
-            'storm_prediction' => $this->storm_prediction,
-            'wind_direction' => $this->wind_direction,
-            'windDirection' => $this->windDirection,
-            'wind_speed' => $this->wind_speed,
-            'wind_gust' => $this->wind_gust,
-            'cloudiness' => $this->cloudiness,
-            'humidity' => $this->humidity,
-            'dew_point' => $this->dew_point,
-            'snow_height' => $this->snow_height,
-            'snow_fall' => $this->snow_fall,
-            'icon_weather' => $this->icon_weather,
-            'description' => $this->description,
-            'pollen_birch' => $this->pollen_birch,
-            'radiation' => $this->radiation,
-            'road_condition_code' => $this->road_condition_code,
+            'time' => new Carbon($this->current['time']),
+            'temperature_air' => $this->current['temperature_air'],
+            'temperature_heat_index' => $this->current['temperature_heat_index'],
+            'temperature_water' => $this->current['temperature_water'],
+            'precipitation' => $this->current['precipitation'],
+            'precipitation_type' => $this->current['precipitation_type'],
+            'precipitationType' => PrecipitationType::createDTO($this->current['precipitation_type']),
+            'precipitation_intensity' => $this->current['precipitation_intensity'],
+            'precipitationIntensity' => PrecipitationIntensity::createDTO($this->current['precipitation_intensity']),
+            'precipitation_probability' => $this->current['precipitation_probability'],
+            'pressure' => $this->current['pressure'],
+            'storm_prediction' => $this->current['storm_prediction'],
+            'wind_direction' => $this->current['wind_direction'],
+            'windDirection' => $this->current['wind_direction'] ? Wind::createDTO($this->current['wind_direction']) : null,
+            'wind_speed' => $this->current['wind_speed'],
+            'wind_gust' => $this->current['wind_gust'],
+            'cloudiness' => $this->current['cloudiness'],
+            'cloudinessLabel' => $this->current['cloudiness'] ? Cloudiness::createDTO($this->current['cloudiness']) : null,
+            'humidity' => $this->current['humidity'],
+            'dew_point' => $this->current['dew_point'],
+            'snow_height' => $this->current['snow_height'],
+            'snow_fall' => $this->current['snow_fall'],
+            'icon_weather' => $this->current['icon_weather'],
+            'description' => $this->current['description'],
+            'pollen_birch' => $this->current['pollen_birch'],
+            'pollenBirch' => $this->current['pollen_birch'] ? PollenBirch::createDTO($this->current['pollen_birch']) : null,
+            'pollenGrass' => $this->current['pollen_grass'] ? PollenGrass::createDTO($this->current['pollen_grass']) : null,
+            'radiation' => $this->current['radiation'],
+            'road_condition_code' => $this->current['road_condition_code'],
         ];
     }
 }

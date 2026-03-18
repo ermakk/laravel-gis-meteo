@@ -74,7 +74,8 @@ class ForecastRequest extends Request implements HasBody, Cacheable
         } else {
             $data = $response->json();
         }
-        return new Weather($data['location'], $data['forecast'], $data['current'], $data['astronomy']);
+
+        return new Weather($data['location'], $data['forecast'], $data['astronomy']);
     }
     public function await(array $params = [])
     {
