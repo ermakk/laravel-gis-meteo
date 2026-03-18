@@ -12,7 +12,7 @@ class GisMeteoService
 {
     protected GisMeteoConnector $connector;
     protected int $cacheTtl = 86400;
-    protected string $city = 'Moscow';
+    protected ?string $city = null;
 
     public function __construct(int $cacheTtl)
     {
@@ -37,26 +37,21 @@ class GisMeteoService
         $day = now()->format('Y-m-d');
         // Создаем уникальный ключ для кэширования
         $cacheKey = "gis-meteo.weather.$city.day.$day";
-        try {
-            if(config('gis-meteo.debug', false)) {
-                $request = new ForecastRequest($city);
-                $response = $this->connector->send($request->debugMode());
-                return $response->dto();
-            }
-            return Cache::remember($cacheKey, $this->cacheTtl, function () use ($city) {
-                $request = new ForecastRequest($city);
-                $response = $this->connector->send($request);
-                if($response->status() === 200) {
-                    return $response->dto();
-                } else {
-                    throw new \Exception('Произошла ошибка при запросе на GisMeteo');
-                }
-                return $response->dto();
-            });
-        } catch($e) {
-            return $e;
+        if(config('gis-meteo.debug', false)) {
+            $request = new ForecastRequest();
+            $response = $request->setCity($city)->debugMode()->await();
+            return $response->dto();
         }
-    }
+        return Cache::remember($cacheKey, $this->cacheTtl, function () use ($city) {
+            $request = new ForecastRequest();
+            $response = $request->setCity($city)->await();
+            if($response->status() === 200) {
+                return $response->dto();
+            } else {
+                throw new \Exception('Произошла ошибка при запросе на GisMeteo. Статус ответа: '.$response->status());
+            }
+        });
+    }    
 
     // Метод для очистки кэша для конкретного города
     public function clearCache(string $city = null): void

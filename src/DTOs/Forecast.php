@@ -48,6 +48,10 @@ class Forecast
     )
     {
         // Инициализация коллекций с преобразованием
+        $this->temperature_air = $this->normalizeNumbers($temperature_air, 1);
+        $this->temperature_heat_index = $this->normalizeNumbers($temperature_heat_index, 1);
+        $this->wind_speed = $this->normalizeNumbers($wind_speed, 1);
+        $this->wind_gust = $this->normalizeNumbers($wind_gust, 1);
         $this->time = collect($time)->map(fn($item) => new Carbon($item));
         $this->windDirection = collect($wind_direction ?? [])->map(fn($deg) => Wind::getWindDirection($deg));
         $this->precipitationIntensity = PrecipitationIntensity::mapCollection($this->precipitation_intensity);
@@ -57,7 +61,13 @@ class Forecast
         $this->pollenGrass = PollenGrass::mapCollection($this->pollen_grass ?? []);
         $this->windDirection = Wind::mapCollection($this->wind_direction ?? []);
     }
-
+    protected function normalizeNumbers(array $numbers, int $precision): array
+    {
+        return array_map(
+            fn($num) => is_numeric($num) ? number_format((fleat) $num, $precision, '.', '') : $num,
+            $numbers
+        );
+    }
     /**
      * Преобразует в массив (для сериализации)
      */
