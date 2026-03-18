@@ -71,7 +71,7 @@ class Current
 
     protected function normalizeNumbers(array $numbers, int $precision): array
     {
-        return is_numeric($num) ? number_format((fleat) $num, $precision, '.', '') : $num;
+        return is_numeric($numbers) ? number_format((fleat) $numbers, $precision, '.', '') : $num;
     }
     /**
      * Преобразует в массив (для сериализации)
