@@ -69,7 +69,7 @@ class Current
         $this->windDirection = $wind_direction ? Wind::createDTO($wind_direction) : null;
     }
 
-    protected function normalizeNumbers(array $numbers, int $precision): array
+    protected function normalizeNumbers(int|float $numbers, int $precision): int|float
     {
         return is_numeric($numbers) ? number_format((float) $numbers, $precision, '.', '') : $numbers;
     }
