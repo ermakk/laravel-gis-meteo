@@ -64,7 +64,7 @@ class Forecast
     protected function normalizeNumbers(array $numbers, int $precision): array
     {
         return array_map(
-            fn($num) => is_numeric($num) ? number_format((fleat) $num, $precision, '.', '') : $num,
+            fn($num) => is_numeric($num) ? number_format((float) $num, $precision, '.', '') : $num,
             $numbers
         );
     }
