@@ -53,7 +53,7 @@ class GisMeteoService
                 }
                 return $response->dto();
             });
-        } catch($e) {
+        } catch(\Exception $e) {
             return $e;
         }
     }
