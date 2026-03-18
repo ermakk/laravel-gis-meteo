@@ -55,10 +55,10 @@ class Current
     {
 
         // Инициализация коллекций с преобразованием
-        $this->temperature_air = $this->normalizeNumbers($temperature_air, 1);
-        $this->temperature_heat_index = $this->normalizeNumbers($temperature_heat_index, 1);
-        $this->wind_speed = $this->normalizeNumbers($wind_speed, 1);
-        $this->wind_gust = $this->normalizeNumbers($wind_gust, 1);
+        $this->temperature_air = $this->normalizeNumber($temperature_air, 1);
+        $this->temperature_heat_index = $this->normalizeNumber($temperature_heat_index, 1);
+        $this->wind_speed = $this->normalizeNumber($wind_speed, 1);
+        $this->wind_gust = $this->normalizeNumber($wind_gust, 1);
 
         $this->time = collect($time)->map(fn($item) => new Carbon($item));
         $this->precipitationIntensity = PrecipitationIntensity::createDTO($this->precipitation_intensity);
@@ -69,9 +69,9 @@ class Current
         $this->windDirection = $wind_direction ? Wind::createDTO($wind_direction) : null;
     }
 
-    protected function normalizeNumbers(int|float $numbers, int $precision): int|float
+    protected function normalizeNumber(int|float $number, int $precision): int|float
     {
-        return is_numeric($numbers) ? number_format((float) $numbers, $precision, '.', '') : $numbers;
+        return is_float($number) ? number_format((float) $number, $precision, '.', '') : $number;
     }
     /**
      * Преобразует в массив (для сериализации)
