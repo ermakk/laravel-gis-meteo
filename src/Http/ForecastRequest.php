@@ -34,7 +34,8 @@ class ForecastRequest extends Request implements HasBody, Cacheable
     protected function cacheKey(PendingRequest $pendingRequest): ?string
     {
         $day = now()->format('Y-m-d');
-        return "gis-meteo.request.$this->city.day.$day";
+        $hour = now()->hour;
+        return "gis-meteo.request.$this->city.day.$day.hour.$hour";
     }
     /**
      * @inheritDoc
@@ -99,6 +100,6 @@ class ForecastRequest extends Request implements HasBody, Cacheable
      */
     public function cacheExpiryInSeconds(): int
     {
-        return config('gis-meteo.cache_ttl', 86400);
+        return config('gis-meteo.cache_ttl', 3600);
     }
 }
