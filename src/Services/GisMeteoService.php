@@ -11,7 +11,7 @@ use Ermakk\GisMeteo\DTOs\Forecast;
 class GisMeteoService
 {
     protected GisMeteoConnector $connector;
-    protected int $cacheTtl = 86400;
+    protected int $cacheTtl = 3600;
     protected ?string $city = null;
 
     public function __construct(int $cacheTtl)
@@ -34,9 +34,10 @@ class GisMeteoService
     public function getWeather(): Weather
     {
         $city = $city ?? config('gis-meteo.default_city', 'Moscow');
-        $day = now()->format('Y-m-d');
         // Создаем уникальный ключ для кэширования
-        $cacheKey = "gis-meteo.weather.$city.day.$day";
+        $day = now()->format('Y-m-d');
+        $hour = now()->hour;
+        $cacheKey = "gis-meteo.weather.$city.day.$day.hour.$hour";
         if(config('gis-meteo.debug', false)) {
             $request = new ForecastRequest();
             $response = $request->setCity($city)->debugMode()->await();
@@ -58,7 +59,8 @@ class GisMeteoService
     {
         $city = $city ?: $this->city;
         $day = now()->format('Y-m-d');
-        $cacheKey = "gis-meteo.weather.$city.day.$day";
+        $hour = now()->hour;
+        $cacheKey = "gis-meteo.weather.$city.day.$day.hour.$hour";
         Cache::forget($cacheKey);
     }
 
